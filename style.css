@@ -683,7 +683,7 @@ spline-viewer {
   color: #c084fc;
 }
 
-/* ===== WORK SECTION ===== */
+/* =====Featured WORK SECTION ===== */
 .work {
   padding: 100px 6vw;
 }
@@ -855,7 +855,7 @@ spline-viewer {
 }
 
 .image-modal-content {
-  position: relative;
+  /* position: relative; */
   max-width: 92%;
   max-height: 92%;
   border-radius: 12px;
