@@ -884,6 +884,51 @@ p.desc {
 }
 
 .stat-card:hover {
+
+/* Very short screens (Max Height < 700px) — ensure Featured Work is visible */
+@media (max-height: 700px) {
+  /* Reduce navbar and hero vertical space so work section appears sooner */
+  .navbar {
+    padding: 10px 18px;
+  }
+
+  .hero {
+    padding: 48px 6vw 36px;
+    min-height: auto;
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  /* Make sure headings and lead text are compact */
+  h1 {
+    font-size: 40px;
+    line-height: 1.05;
+  }
+
+  .lead, p.desc {
+    font-size: 14px;
+  }
+
+  /* Reduce spacing above the work section so Featured Work is more visible */
+  .work {
+    padding: 20px 6vw 20px;
+  }
+
+  .work-header h2 {
+    font-size: 32px;
+  }
+
+  /* Disable reveal/animation hiding on very short screens so content is always visible */
+  .reveal,
+  .service-card,
+  .work-card,
+  .stat-card,
+  .info-card {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+  }
+}
   transform: translateY(-4px);
 }
 
