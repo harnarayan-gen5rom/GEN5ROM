@@ -61,6 +61,7 @@ function openProject(card) {
     modalImage.alt = card.dataset.title;
   }
   modal.hidden = false;
+  syncScenePlayback();
   document.body.style.overflow = 'hidden';
   modal.querySelector('button').focus();
 }
@@ -70,10 +71,12 @@ function closeProject() {
   imageModal.hidden = true;
   videoFrame.removeAttribute('src');
   modalImage.removeAttribute('src');
+  syncScenePlayback();
   document.body.style.overflow = '';
   if (wasOpen) modalTrigger?.focus({ preventScroll: true });
 }
 cards.forEach(card => card.addEventListener('click', () => openProject(card)));
+document.querySelectorAll('.project-trigger').forEach(card => card.addEventListener('click', () => openProject(card)));
 document.querySelectorAll('.modal-bar button').forEach(button => button.addEventListener('click', closeProject));
 [videoModal, imageModal].forEach(modal => modal.addEventListener('click', event => {
   if (event.target === modal) closeProject();
@@ -101,6 +104,43 @@ const reloadScene = document.getElementById('reloadScene');
 let sceneLoaded = false;
 let viewerImport;
 let sceneTimeout;
+let sceneInView = false;
+let manuallyPaused = false;
+let qualityMode = 'auto';
+const sceneToggle = document.getElementById('toggleScene');
+const qualityButtons = [...document.querySelectorAll('[data-quality]')];
+function scenePixelRatio(mode, width, height, dpr, compact) {
+  // Cap actual drawing pixels, especially on 3x mobile screens and expanded views.
+  const cap = mode === 'smooth' ? 1 : mode === 'crisp' ? 2 : compact ? 1.25 : 1.5;
+  const budget = mode === 'crisp' ? 3200000 : mode === 'smooth' ? 900000 : 1800000;
+  return Math.max(.75, Math.min(dpr || 1, cap, Math.sqrt(budget / Math.max(1, width * height))));
+}
+function applySceneQuality() {
+  const runtime = document.getElementById('splineViewer')?._spline;
+  const renderer = runtime?._renderer;
+  if (!sceneLoaded || typeof renderer?.setPixelRatio !== 'function') return;
+  const ratio = scenePixelRatio(qualityMode, stage.clientWidth, stage.clientHeight,
+    window.devicePixelRatio, window.matchMedia('(max-width: 760px)').matches);
+  renderer.setPixelRatio(ratio);
+  runtime.requestRender?.();
+}
+function syncScenePlayback() {
+  const runtime = document.getElementById('splineViewer')?._spline;
+  if (!sceneLoaded || !runtime) return;
+  const paused = manuallyPaused || !sceneInView || document.hidden || !videoModal.hidden || !imageModal.hidden;
+  if (paused) runtime.stop?.();
+  else { runtime.play?.(); runtime.requestRender?.(); }
+  sceneToggle.setAttribute('aria-pressed', String(manuallyPaused));
+  sceneToggle.textContent = manuallyPaused ? 'Resume' : 'Pause';
+}
+qualityButtons.forEach(button => button.addEventListener('click', () => {
+  qualityMode = button.dataset.quality;
+  qualityButtons.forEach(item => item.setAttribute('aria-pressed', String(item === button)));
+  applySceneQuality();
+}));
+sceneToggle.addEventListener('click', () => { manuallyPaused = !manuallyPaused; syncScenePlayback(); });
+document.addEventListener('visibilitychange', syncScenePlayback);
+if ('ResizeObserver' in window) new ResizeObserver(applySceneQuality).observe(stage);
 function showSceneProblem(message) {
   status.hidden = false;
   status.querySelector('span').textContent = message;
@@ -110,6 +150,11 @@ function showSceneProblem(message) {
 function disableSceneRotation(data) {
   const scene = data?.scene;
   if (!scene) return;
+  // Start at 1x to avoid a large GPU allocation before the capped mode is applied.
+  if (scene.publish?.settings?.web) {
+    scene.publish.settings.web.pixelRatioMobile = 1;
+    scene.publish.settings.web.pixelRatioDesktop = 1;
+  }
   if (scene.publish?.orbitControls) {
     scene.publish.orbitControls.autoRotate = false;
     scene.publish.orbitControls.hoverRotatePanMode = 0;
@@ -132,6 +177,7 @@ function prepareSplineRuntime(runtime) {
   const descriptor = Object.getOwnPropertyDescriptor(runtime, '_data');
   if (descriptor && !descriptor.configurable) return;
   let data = runtime._data;
+  runtime.renderMode = 'auto';
   disableSceneRotation(data);
   Object.defineProperty(runtime, '_data', {
     configurable: true,
@@ -160,6 +206,7 @@ function observeViewer(viewer) {
   viewer.addEventListener('load-start', () => {
     queueMicrotask(() => prepareSplineViewer(viewer));
     sceneLoaded = false;
+    sceneToggle.disabled = true;
     status.hidden = false;
     status.querySelector('span').textContent = 'Loading the interactive scene…';
     reloadScene.hidden = true;
@@ -177,7 +224,7 @@ function observeViewer(viewer) {
       orbit.autoRotate = false;
       orbit.hoverRotatePanMode = 0;
       orbit.enableRotate = true;
-      orbit.stopDamping();
+      orbit.stopDamping?.();
     }
     const cameraSettings = runtime?.data?.scene?.publish?.orbitControls;
     if (cameraSettings) {
@@ -186,6 +233,9 @@ function observeViewer(viewer) {
       cameraSettings.enableRotate = true;
     }
     sceneLoaded = true;
+    sceneToggle.disabled = false;
+    applySceneQuality();
+    syncScenePlayback();
     status.hidden = true;
     clearTimeout(sceneTimeout);
   });
@@ -194,7 +244,10 @@ function observeViewer(viewer) {
 observeViewer(document.getElementById('splineViewer'));
 async function supports3D() {
   const canvas = document.createElement('canvas');
-  try { if (canvas.getContext('webgl2')) return true; } catch {}
+  try {
+    const context = canvas.getContext('webgl2');
+    if (context) { context.getExtension('WEBGL_lose_context')?.loseContext(); return true; }
+  } catch {}
   try { if (navigator.gpu && await navigator.gpu.requestAdapter()) return true; } catch {}
   return false;
 }
@@ -219,20 +272,47 @@ async function loadViewer() {
 }
 if ('IntersectionObserver' in window) {
   const observer = new IntersectionObserver(entries => {
-    if (entries.some(entry => entry.isIntersecting)) { loadViewer(); observer.disconnect(); }
-  }, { rootMargin: '400px' });
+    sceneInView = entries.some(entry => entry.isIntersecting);
+    if (sceneInView && !viewerImport && !stage.classList.contains('graphics-unavailable')) loadViewer();
+    syncScenePlayback();
+  }, { threshold: .01 });
   observer.observe(stage);
-} else { loadViewer(); }
+} else { sceneInView = true; loadViewer(); }
 reloadScene.addEventListener('click', async () => {
   status.querySelector('span').textContent = 'Loading the interactive scene…';
   reloadScene.hidden = true;
   sceneLoaded = false;
+  sceneToggle.disabled = true;
   const oldViewer = document.getElementById('splineViewer');
   const replacement = oldViewer.cloneNode(false);
+  delete replacement.dataset.runtimePrepared;
   observeViewer(replacement);
   oldViewer.replaceWith(replacement);
   await loadViewer();
 });
+
+// One-shot entrances: no continuous pointer or scroll animation loop.
+const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+if ('IntersectionObserver' in window && !reducedMotion.matches) {
+  const reveals = new IntersectionObserver(entries => entries.forEach(entry => {
+    if (entry.isIntersecting) { entry.target.classList.add('revealed'); reveals.unobserve(entry.target); }
+  }), { threshold: .08 });
+  document.querySelectorAll('.section-heading, .featured-card, .service-card, .process-grid li, .about-portrait, .about-copy').forEach(element => {
+    element.classList.add('reveal'); reveals.observe(element);
+  });
+}
+if ('IntersectionObserver' in window) {
+  const activeSections = new Map();
+  const navigation = new IntersectionObserver(entries => {
+    entries.forEach(entry => activeSections.set(entry.target.id, entry.isIntersecting));
+    const active = [...activeSections].find(([, visible]) => visible)?.[0];
+    document.querySelectorAll('.desktop-nav a').forEach(link => {
+      if (link.getAttribute('href') === `#${active}`) link.setAttribute('aria-current', 'location');
+      else link.removeAttribute('aria-current');
+    });
+  }, { rootMargin: '-15% 0px -55% 0px' });
+  document.querySelectorAll('#work, #interactive, #services, #about').forEach(section => navigation.observe(section));
+}
 document.getElementById('expandScene').addEventListener('click', event => {
   const project = document.querySelector('.spline-project');
   const expanded = project.classList.toggle('expanded');
