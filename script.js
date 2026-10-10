@@ -125,9 +125,23 @@ function observeViewer(viewer) {
   viewer.addEventListener('context-loss', () => showSceneProblem('The 3D viewer needs to reload. Please try again.'));
 }
 observeViewer(document.getElementById('splineViewer'));
+async function supports3D() {
+  const canvas = document.createElement('canvas');
+  try { if (canvas.getContext('webgl2')) return true; } catch {}
+  try { if (navigator.gpu && await navigator.gpu.requestAdapter()) return true; } catch {}
+  return false;
+}
 async function loadViewer() {
   try {
-    viewerImport ??= import('https://unpkg.com/@splinetool/viewer@1.12.81/build/spline-viewer.js');
+    if (!await supports3D()) {
+      clearTimeout(sceneTimeout);
+      stage.classList.add('graphics-unavailable');
+      stage.querySelector('.stage-label').textContent = 'INTERACTIVE 3D PROJECT';
+      showSceneProblem('Explore this project in a browser with graphics acceleration enabled.');
+      return;
+    }
+    stage.classList.remove('graphics-unavailable');
+    viewerImport ??= import('https://cdn.spline.design/@splinetool/viewer@2.0.75/build/spline-viewer.js');
     await viewerImport;
     await customElements.whenDefined('spline-viewer');
   } catch {
