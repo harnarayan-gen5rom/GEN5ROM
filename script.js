@@ -118,6 +118,16 @@ function observeViewer(viewer) {
     }, 45000);
   });
   viewer.addEventListener('load-complete', () => {
+    // Pinned Spline Viewer 2.0.75 exposes its Application here.
+    // Turn off the camera turntable while retaining drag, hover and scene events.
+    const runtime = viewer._spline;
+    const orbit = runtime?.controls?.orbitControls;
+    if (orbit) {
+      orbit.autoRotate = false;
+      orbit.stopDamping();
+    }
+    const cameraSettings = runtime?.data?.scene?.publish?.orbitControls;
+    if (cameraSettings) cameraSettings.autoRotate = false;
     sceneLoaded = true;
     status.hidden = true;
     clearTimeout(sceneTimeout);
