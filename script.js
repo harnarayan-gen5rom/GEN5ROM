@@ -106,8 +106,59 @@ function showSceneProblem(message) {
   status.querySelector('span').textContent = message;
   reloadScene.hidden = false;
 }
+// Disable model Look At events before Spline constructs its event managers.
+function disableSceneRotation(data) {
+  const scene = data?.scene;
+  if (!scene) return;
+  if (scene.publish?.orbitControls) {
+    scene.publish.orbitControls.autoRotate = false;
+    scene.publish.orbitControls.hoverRotatePanMode = 0;
+    scene.publish.orbitControls.enableRotate = true;
+  }
+  scene.objects?.traverse?.((_id, object) => {
+    const events = object.events;
+    if (!events) return;
+    const values = Array.isArray(events) ? events : Object.values(events);
+    values.forEach(event => {
+      const settings = event.data || event;
+      if (settings.type === 'LookAt') settings.disabled = true;
+    });
+  });
+}
+const preparedRuntimes = new WeakSet();
+function prepareSplineRuntime(runtime) {
+  if (!runtime || preparedRuntimes.has(runtime)) return;
+  // Viewer 2.0.75 assigns _data before creating controls, entities and events.
+  const descriptor = Object.getOwnPropertyDescriptor(runtime, '_data');
+  if (descriptor && !descriptor.configurable) return;
+  let data = runtime._data;
+  disableSceneRotation(data);
+  Object.defineProperty(runtime, '_data', {
+    configurable: true,
+    enumerable: descriptor?.enumerable ?? true,
+    get() { return data; },
+    set(value) { disableSceneRotation(value); data = value; }
+  });
+  preparedRuntimes.add(runtime);
+}
+function prepareSplineViewer(viewer) {
+  if (!viewer || viewer.dataset.runtimePrepared) return;
+  viewer.dataset.runtimePrepared = 'true';
+  // Wrap application creation, and handle an application already loading.
+  const createApplication = viewer._createApplication;
+  if (typeof createApplication === 'function') {
+    viewer._createApplication = function (...args) {
+      const runtime = createApplication.apply(this, args);
+      prepareSplineRuntime(runtime);
+      return runtime;
+    };
+  }
+  prepareSplineRuntime(viewer._spline);
+}
+
 function observeViewer(viewer) {
   viewer.addEventListener('load-start', () => {
+    queueMicrotask(() => prepareSplineViewer(viewer));
     sceneLoaded = false;
     status.hidden = false;
     status.querySelector('span').textContent = 'Loading the interactive scene…';
@@ -160,6 +211,7 @@ async function loadViewer() {
     viewerImport ??= import('https://cdn.spline.design/@splinetool/viewer@2.0.75/build/spline-viewer.js');
     await viewerImport;
     await customElements.whenDefined('spline-viewer');
+    prepareSplineViewer(document.getElementById('splineViewer'));
   } catch {
     viewerImport = null;
     showSceneProblem('The 3D viewer could not load. Check your connection and try again.');
