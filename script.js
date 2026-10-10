@@ -113,7 +113,8 @@ function scenePixelRatio(mode, width, height, dpr, compact) {
   // Cap actual drawing pixels, especially on 3x mobile screens and expanded views.
   const cap = mode === 'smooth' ? 1 : mode === 'crisp' ? 2 : compact ? 1.25 : 1.5;
   const budget = mode === 'crisp' ? 3200000 : mode === 'smooth' ? 900000 : 1800000;
-  return Math.max(.75, Math.min(dpr || 1, cap, Math.sqrt(budget / Math.max(1, width * height))));
+  const density = mode === 'crisp' ? 2 : dpr || 1;
+  return Math.max(.75, Math.min(density, cap, Math.sqrt(budget / Math.max(1, width * height))));
 }
 function applySceneQuality() {
   const runtime = document.getElementById('splineViewer')?._spline;
