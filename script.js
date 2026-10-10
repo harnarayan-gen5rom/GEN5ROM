@@ -1,201 +1,160 @@
-/* ===== NAVBAR SCROLL EFFECT ===== */
-const navbar = document.querySelector('.navbar');
-
-if (navbar) {
-  window.addEventListener('scroll', () => {
-    navbar.classList.toggle('scrolled', window.scrollY > 20);
-  });
-}
-
-/* ===== MOBILE MENU TOGGLE ===== */
-const hamburger = document.querySelector('#hamburger');
-const mobileMenu = document.querySelector('#mobileMenu');
-
-if (hamburger && mobileMenu) {
-  hamburger.addEventListener('click', () => {
-    const isOpen = !hamburger.classList.contains('active');
-    hamburger.classList.toggle('active', isOpen);
-    mobileMenu.classList.toggle('active', isOpen);
-    hamburger.setAttribute('aria-expanded', String(isOpen));
-  });
-
-  /* Close menu on link click */
-  mobileMenu.querySelectorAll('a').forEach(link => {
-    link.addEventListener('click', () => {
-      hamburger.classList.remove('active');
-      mobileMenu.classList.remove('active');
-      hamburger.setAttribute('aria-expanded', 'false');
-    });
-  });
-}
-
-/* ===== WORK FILTERS & SEARCH ===== */
-const filters = document.querySelectorAll('.filter');
-const workCards = document.querySelectorAll('.work-card');
-const searchInput = document.querySelector('.search');
-
-filters.forEach(button => {
-  button.addEventListener('click', () => {
-    filters.forEach(b => b.classList.remove('active'));
-    button.classList.add('active');
-
-    const filter = button.dataset.filter;
-    workCards.forEach(card => {
-      card.style.display = filter === 'all' || card.classList.contains(filter) ? 'block' : 'none';
-    });
-  });
+const hamburger = document.getElementById('hamburger');
+const mobileMenu = document.getElementById('mobileMenu');
+hamburger.addEventListener('click', () => {
+  const open = hamburger.getAttribute('aria-expanded') !== 'true';
+  hamburger.setAttribute('aria-expanded', String(open));
+  mobileMenu.hidden = !open;
 });
+mobileMenu.querySelectorAll('a').forEach(link => link.addEventListener('click', () => {
+  mobileMenu.hidden = true;
+  hamburger.setAttribute('aria-expanded', 'false');
+}));
 
-if (searchInput) {
-  searchInput.addEventListener('input', e => {
-    const value = e.target.value.toLowerCase();
-    workCards.forEach(card => {
-      card.style.display = card.innerText.toLowerCase().includes(value) ? 'block' : 'none';
-    });
-  });
+// Category and query are applied together, including after revealing more work.
+const filters = [...document.querySelectorAll('.filter')];
+const cards = [...document.querySelectorAll('.work-card')];
+const search = document.querySelector('.search');
+const showMore = document.getElementById('showMore');
+let category = 'all';
+let visibleLimit = 9;
+function updateGallery() {
+  const query = search.value.trim().toLocaleLowerCase();
+  const matches = cards.filter(card => (category === 'all' || card.dataset.category === category) &&
+    card.dataset.title.toLocaleLowerCase().includes(query));
+  const visible = new Set(matches.slice(0, visibleLimit));
+  cards.forEach(card => { card.hidden = !visible.has(card); });
+  document.getElementById('projectCount').textContent = matches.length ?
+    `Showing ${Math.min(visibleLimit, matches.length)} of ${matches.length} projects` : '0 projects found';
+  document.getElementById('emptyState').hidden = matches.length > 0;
+  showMore.hidden = matches.length <= visibleLimit;
+  showMore.textContent = `Show more projects (${matches.length - visibleLimit}) ↓`;
 }
-
-/* ===== SERVICE CARDS HOVER ===== */
-const serviceCards = document.querySelectorAll('.service-card');
-
-serviceCards.forEach(card => {
-  card.addEventListener('mouseenter', () => {
-    card.style.transform = 'scale(1.04)';
-    card.style.boxShadow = '0 30px 60px rgba(192, 132, 252, 0.25)';
+filters.forEach(button => button.addEventListener('click', () => {
+  category = button.dataset.filter;
+  visibleLimit = 9;
+  filters.forEach(filter => {
+    const selected = filter === button;
+    filter.classList.toggle('active', selected);
+    filter.setAttribute('aria-pressed', String(selected));
   });
+  updateGallery();
+}));
+search.addEventListener('input', () => { visibleLimit = 9; updateGallery(); });
+showMore.addEventListener('click', () => { visibleLimit += 9; updateGallery(); });
+updateGallery();
 
-  card.addEventListener('mouseleave', () => {
-    card.style.transform = 'scale(1)';
-    card.style.boxShadow = 'none';
-  });
-});
-
-/* ===== VIDEO MODAL ===== */
-function openModal(videoId) {
-  const modal = document.getElementById('videoModal');
-  const iframe = document.getElementById('videoFrame');
-
-  if (!modal || !iframe) return;
-
-  iframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0`;
-  modal.classList.add('active');
-  document.body.style.overflow = 'hidden';
-}
-
-function closeModal() {
-  const modal = document.getElementById('videoModal');
-  const iframe = document.getElementById('videoFrame');
-
-  if (!modal || !iframe) return;
-
-  iframe.src = '';
-  modal.classList.remove('active');
-  document.body.style.overflow = 'auto';
-}
-
-/* Close modal on outside click */
-document.addEventListener('click', e => {
-  const modal = document.getElementById('videoModal');
-  const content = document.querySelector('.modal-content');
-  const imageModal = document.getElementById('imageModal');
-
-  if (imageModal && imageModal.contains(e.target)) return;
-  
-  if (modal && modal.classList.contains('active') && !content.contains(e.target) && !e.target.closest('.work-card')) {
-    closeModal();
-  }
-});
-
-/* Close modal with Escape key */
-document.addEventListener('keydown', e => {
-  if (e.key === 'Escape') {
-    closeModal();
-    if (typeof closeImageModal === 'function') closeImageModal();
-  }
-});
-
-/* ===== IMAGE LIGHTBOX MODAL ===== */
+const videoModal = document.getElementById('videoModal');
 const imageModal = document.getElementById('imageModal');
+const videoFrame = document.getElementById('videoFrame');
 const modalImage = document.getElementById('modalImage');
-const imageCaption = document.getElementById('imageCaption');
-const closeImage = document.getElementById('closeImage');
-
-function openImageModal(src, caption) {
-  if (!imageModal || !modalImage) return;
-  
-  modalImage.src = src;
-  imageCaption.textContent = caption || '';
-  imageModal.classList.add('active');
+let modalTrigger;
+function openProject(card) {
+  modalTrigger = card;
+  const video = card.dataset.video;
+  const modal = video ? videoModal : imageModal;
+  if (video) {
+    document.getElementById('videoTitle').textContent = card.dataset.title;
+    videoFrame.src = `https://www.youtube.com/embed/${video}?autoplay=1&rel=0`;
+  } else {
+    document.getElementById('imageCaption').textContent = card.dataset.title;
+    modalImage.src = card.querySelector('img').src;
+    modalImage.alt = card.dataset.title;
+  }
+  modal.hidden = false;
   document.body.style.overflow = 'hidden';
+  modal.querySelector('button').focus();
 }
-
-function closeImageModal() {
-  if (!imageModal || !modalImage) return;
-  
-  imageModal.classList.remove('active');
-  modalImage.src = '';
-  document.body.style.overflow = 'auto';
+function closeProject() {
+  const wasOpen = !videoModal.hidden || !imageModal.hidden;
+  videoModal.hidden = true;
+  imageModal.hidden = true;
+  videoFrame.removeAttribute('src');
+  modalImage.removeAttribute('src');
+  document.body.style.overflow = '';
+  if (wasOpen) modalTrigger?.focus({ preventScroll: true });
 }
-
-/* Image click handlers */
-document.querySelectorAll('.work-card img').forEach(img => {
-  img.style.cursor = 'pointer';
-  img.addEventListener('click', e => {
-    const card = img.closest('.work-card');
-    const isVideoCard = card && (card.dataset.video || card.classList.contains('video'));
-
-    if (isVideoCard) return;
-
-    e.stopPropagation();
-    e.preventDefault();
-
-    const caption = card ? (card.dataset.title || card.querySelector('h3')?.innerText || '') : '';
-    openImageModal(img.src, caption);
-  });
+cards.forEach(card => card.addEventListener('click', () => openProject(card)));
+document.querySelectorAll('.modal-bar button').forEach(button => button.addEventListener('click', closeProject));
+[videoModal, imageModal].forEach(modal => modal.addEventListener('click', event => {
+  if (event.target === modal) closeProject();
+}));
+document.addEventListener('keydown', event => {
+  if (event.key === 'Escape') {
+    closeProject();
+    mobileMenu.hidden = true;
+    hamburger.setAttribute('aria-expanded', 'false');
+  }
+  // Keep keyboard focus inside the open dialog.
+  if (event.key === 'Tab' && (!videoModal.hidden || !imageModal.hidden)) {
+    const modal = videoModal.hidden ? imageModal : videoModal;
+    const targets = [...modal.querySelectorAll('button, iframe')];
+    const first = targets[0], last = targets[targets.length - 1];
+    if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last.focus(); }
+    else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first.focus(); }
+  }
 });
 
-if (closeImage) {
-  closeImage.addEventListener('click', closeImageModal);
+// Load the 3D component close to its section, keeping the initial page lightweight.
+const stage = document.getElementById('splineStage');
+const status = document.getElementById('splineStatus');
+const reloadScene = document.getElementById('reloadScene');
+let sceneLoaded = false;
+let viewerImport;
+let sceneTimeout;
+function showSceneProblem(message) {
+  status.hidden = false;
+  status.querySelector('span').textContent = message;
+  reloadScene.hidden = false;
 }
-
-if (imageModal) {
-  imageModal.addEventListener('click', e => {
-    if (e.target === imageModal) closeImageModal();
+function observeViewer(viewer) {
+  viewer.addEventListener('load-start', () => {
+    sceneLoaded = false;
+    status.hidden = false;
+    status.querySelector('span').textContent = 'Loading the interactive scene…';
+    reloadScene.hidden = true;
+    clearTimeout(sceneTimeout);
+    sceneTimeout = setTimeout(() => {
+      if (!sceneLoaded) showSceneProblem('The 3D scene is taking longer to load. You can try again.');
+    }, 45000);
   });
+  viewer.addEventListener('load-complete', () => {
+    sceneLoaded = true;
+    status.hidden = true;
+    clearTimeout(sceneTimeout);
+  });
+  viewer.addEventListener('context-loss', () => showSceneProblem('The 3D viewer needs to reload. Please try again.'));
 }
-
-/* ===== SMOOTH SCROLL FOR NAVIGATION ===== */
-const navLinks = document.querySelectorAll('nav a[href^="#"]');
-navLinks.forEach(link => {
-  link.addEventListener('click', function (e) {
-    e.preventDefault();
-    const target = document.querySelector(this.getAttribute('href'));
-    
-    if (target) {
-      target.scrollIntoView({ behavior: 'smooth' });
-    }
-
-    /* Close mobile menu after clicking */
-    if (hamburger && mobileMenu && hamburger.classList.contains('active')) {
-      hamburger.classList.remove('active');
-      mobileMenu.classList.remove('active');
-      hamburger.setAttribute('aria-expanded', 'false');
-    }
-  });
-});
-
-/* ===== SCROLL REVEAL ANIMATION ===== */
-document.addEventListener('DOMContentLoaded', () => {
-  const elements = document.querySelectorAll('.reveal, .service-card, .work-card, .stat-card, .info-card');
-
+observeViewer(document.getElementById('splineViewer'));
+async function loadViewer() {
+  try {
+    viewerImport ??= import('https://unpkg.com/@splinetool/viewer@1.12.81/build/spline-viewer.js');
+    await viewerImport;
+    await customElements.whenDefined('spline-viewer');
+  } catch {
+    viewerImport = null;
+    showSceneProblem('The 3D viewer could not load. Check your connection and try again.');
+  }
+}
+if ('IntersectionObserver' in window) {
   const observer = new IntersectionObserver(entries => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        entry.target.classList.add('active');
-        observer.unobserve(entry.target);
-      }
-    });
-  }, { threshold: 0.15 });
-
-  elements.forEach(el => observer.observe(el));
+    if (entries.some(entry => entry.isIntersecting)) { loadViewer(); observer.disconnect(); }
+  }, { rootMargin: '400px' });
+  observer.observe(stage);
+} else { loadViewer(); }
+reloadScene.addEventListener('click', async () => {
+  status.querySelector('span').textContent = 'Loading the interactive scene…';
+  reloadScene.hidden = true;
+  sceneLoaded = false;
+  const oldViewer = document.getElementById('splineViewer');
+  const replacement = oldViewer.cloneNode(false);
+  observeViewer(replacement);
+  oldViewer.replaceWith(replacement);
+  await loadViewer();
+});
+document.getElementById('expandScene').addEventListener('click', event => {
+  const project = document.querySelector('.spline-project');
+  const expanded = project.classList.toggle('expanded');
+  event.currentTarget.setAttribute('aria-expanded', String(expanded));
+  event.currentTarget.textContent = expanded ? 'Compact viewer ↙' : 'Expand viewer ↗';
+  stage.scrollIntoView({ behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth', block: 'start' });
 });
