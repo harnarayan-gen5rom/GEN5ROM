@@ -500,7 +500,7 @@ function switchScene(url, activeBtn, otherBtn) {
 }
 
 btnRobot?.addEventListener('click', () => {
-  switchScene('https://prod.spline.design/6Wq1Q7YGyM-iab9i/scene.splinecode', btnRobot, btnGen5);
+  switchScene('https://prod.spline.design/NCQe8dUMReBbPYxM/scene.splinecode', btnRobot, btnGen5);
 });
 
 btnGen5?.addEventListener('click', () => {
