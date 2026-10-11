@@ -531,3 +531,120 @@ html.light .modal-bar button:hover {
   background: #f3ecfb;
 }
 
+/* ============================================================
+   THEME TOGGLE BUTTON STYLING (Self-contained for GitHub Pages & Dev)
+   ============================================================ */
+#themeToggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  padding: 6px 14px;
+  border-radius: 30px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  user-select: none;
+  min-height: 36px;
+}
+
+#themeToggle:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+  transform: translateY(-1px);
+}
+
+#themeToggle:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+#themeToggleIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 14px;
+  height: 14px;
+}
+
+#themeToggleIcon svg {
+  width: 14px;
+  height: 14px;
+  display: block;
+}
+
+#mobileThemeToggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 10px 14px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text);
+  font-size: 13px;
+  font-weight: 550;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+#mobileThemeToggle:hover {
+  border-color: var(--accent);
+}
+
+#mobileThemeToggleIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 15px;
+  height: 15px;
+}
+
+#mobileThemeToggleIcon svg {
+  width: 15px;
+  height: 15px;
+  display: block;
+}
+
+#mobileThemeToggleStatus {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 4px 9px;
+  border-radius: 6px;
+  background: var(--border);
+  color: var(--accent);
+}
+
+html.light #themeToggle {
+  background: #ffffff;
+  border-color: #dcd4eb;
+  color: #14111d;
+  box-shadow: 0 2px 8px rgba(30, 20, 50, 0.04);
+}
+
+html.light #themeToggle:hover {
+  border-color: #7928ca;
+  color: #7928ca;
+}
+
+html.light #mobileThemeToggle {
+  background: #ffffff;
+  border-color: #e2dceb;
+  color: #14111d;
+}
+
+html.light #mobileThemeToggleStatus {
+  background: #ede6f8;
+  color: #631bb8;
+}
+
+
