@@ -24,7 +24,7 @@
   })();
  </script>
  <link rel="icon" type="image/webp" href="assets/harnarayan-profile.webp" />
- <link rel="stylesheet" href="style.css" />
+ <link rel="stylesheet" href="style.css?v=20261011_03" />
  <script type="module" src="https://unpkg.com/@splinetool/viewer@1.9.75/build/spline-viewer.js"></script>
 </head>
 <body>
@@ -426,10 +426,61 @@
  <article class="service-card"><span class="service-number">03 / DESIGN</span><h3>Visual &amp; 3D design</h3><p>Distinctive graphics and interactive scenes made to be seen and explored.</p><ul><li>Posters &amp; thumbnails</li><li>Social &amp; brand visuals</li><li>Interactive Spline experiences</li></ul></article></div></section>
  <section class="process container section"><header class="section-heading"><div><p class="eyebrow">FROM BRIEF TO FINAL FRAME</p><h2>A clear process.<br /><span>A creative outcome.</span></h2></div><p>Thoughtful at every step.<br />Collaborative all the way.</p></header><ol class="process-grid"><li><span>01 / UNDERSTAND</span><h3>Find the story.</h3><p>Understand the brief, audience, and the idea that needs to come through.</p></li><li><span>02 / PLAN</span><h3>Shape the sequence.</h3><p>Build the structure and visual direction before opening the timeline.</p></li><li><span>03 / CREATE</span><h3>Bring it to life.</h3><p>Edit, animate, and design a first cut with deliberate pacing and motion.</p></li><li><span>04 / REFINE</span><h3>Make every frame count.</h3><p>Work through feedback and refine the details for the final delivery.</p></li></ol></section>
  <section class="about container section" id="about"><div class="about-portrait"><img src="assets/harnarayan-profile.webp" loading="lazy" alt="Harnarayan" width="1254" height="1254" /><span>Harnarayan / New Delhi</span></div><div class="about-copy"><p class="eyebrow">THE PERSON BEHIND THE PIXELS</p><h2>Curious mind.<br /><span>Creative eye.</span></h2><p>I'm Harnarayan, a video editor and motion graphics designer based in New Delhi with one year of experience. My work spans real estate marketing, AI-focused content, cinematic edits, and visual storytelling.</p><p>I combine thoughtful pacing, motion, and design to make complex ideas engaging. I'm available for freelance, contract, and full-time opportunities.</p><a class="text-link" href="assets/harnarayan-resume.pdf?v=20261011e" target="_blank" rel="noopener noreferrer">View my resume ↗</a></div></section>
- <section class="contact container section" id="contact"><p class="eyebrow">LET'S CREATE SOMETHING</p><h2>Your next story<br />starts <span>here.</span></h2><p>Have a project or an opportunity in mind?<br />Let's talk about what we can make together.</p><a class="email-link" href="mailto:narayansingh28489@gmail.com">narayansingh28489@gmail.com ↗</a><div class="contact-links"><a href="tel:+917503875055">+91 7503875055</a><a href="https://www.instagram.com/gen5.rom/" target="_blank" rel="noopener noreferrer">Instagram ↗</a><a href="assets/harnarayan-resume.pdf?v=20261011e" target="_blank" rel="noopener noreferrer">Resume ↗</a></div></section>
+ <section class="contact container section" id="contact">
+  <p class="eyebrow">LET'S CREATE SOMETHING</p>
+  <h2>Your next story<br />starts <span>here.</span></h2>
+  <p>Have a project or an opportunity in mind?<br />Let's talk about what we can make together.</p>
+  
+  <div class="contact-email-badge">
+    <a class="email-link" href="mailto:narayansingh28489@gmail.com" id="contactEmailLink">narayansingh28489@gmail.com ↗</a>
+    <button type="button" id="copyEmailBtn" class="btn btn-outline" style="padding:6px 14px; font-size:11px; margin-left:12px;" title="Copy email address">Copy 📋</button>
+  </div>
+
+  <!-- Interactive Project Inquiry Form -->
+  <div class="contact-form-wrapper">
+    <form id="contactForm" class="interactive-contact-form">
+      <div class="form-row">
+        <div class="form-group">
+          <label for="senderName">Your Name</label>
+          <input type="text" id="senderName" name="name" required placeholder="e.g. Alex Sharma" />
+        </div>
+        <div class="form-group">
+          <label for="senderEmail">Email Address</label>
+          <input type="email" id="senderEmail" name="email" required placeholder="name@company.com" />
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="serviceSelect">Project Discipline</label>
+        <select id="serviceSelect" name="service">
+          <option value="Commercial Video Editing">Commercial Video Editing</option>
+          <option value="Motion Graphics & VFX">Motion Graphics &amp; After Effects</option>
+          <option value="Interactive 3D / Spline">Interactive 3D &amp; Spline Experience</option>
+          <option value="DaVinci Resolve Color Grading">DaVinci Resolve Color Grading</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="projectMessage">Project Brief &amp; Timeline</label>
+        <textarea id="projectMessage" name="message" rows="4" required placeholder="Describe your timeline, reference links, footage style..."></textarea>
+      </div>
+      <div class="form-actions">
+        <span class="form-note">Quick response · Available worldwide</span>
+        <button type="submit" id="submitContactBtn" class="btn btn-primary">Send Inquiry <span>↗</span></button>
+      </div>
+      <div id="formSuccessMsg" class="form-success" hidden>
+        <span>✓ Thank you! Your message has been sent to Harnarayan. We will reply within 24 hours.</span>
+      </div>
+    </form>
+  </div>
+
+  <div class="contact-links">
+    <a href="tel:+917503875055">+91 7503875055</a>
+    <a href="https://www.instagram.com/gen5.rom/" target="_blank" rel="noopener noreferrer">Instagram ↗</a>
+    <a href="assets/harnarayan-resume.pdf?v=20261011e" target="_blank" rel="noopener noreferrer">Resume ↗</a>
+  </div>
+</section>
 </main>
 <footer class="footer container"><span>© 2026 Harnarayan</span><span>Motion · Video · Design · Interactive 3D</span><a href="#home">Back to top ↑</a></footer>
 <div class="video-modal modal" id="videoModal" role="dialog" aria-modal="true" aria-labelledby="videoTitle" hidden><div class="modal-content"><div class="modal-bar"><h2 id="videoTitle">Video project</h2><button class="close" type="button" aria-label="Close video">×</button></div><iframe id="videoFrame" title="Portfolio video player" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe></div></div>
 <div class="image-modal modal" id="imageModal" role="dialog" aria-modal="true" aria-labelledby="imageCaption" hidden><div class="image-modal-content"><div class="modal-bar"><h2 id="imageCaption">Artwork</h2><button class="close-image" type="button" aria-label="Close image">×</button></div><img id="modalImage" alt="" /></div></div>
-<script src="script.js" defer></script>
+<script src="script.js?v=20261011_03" defer></script>
 </body></html>

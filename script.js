@@ -525,3 +525,32 @@ window.addEventListener('scroll', () => {
     }
   }
 }, { passive: true });
+
+// Interactive Contact Form & Copy Email
+const copyBtn = document.getElementById('copyEmailBtn');
+copyBtn?.addEventListener('click', () => {
+  navigator.clipboard.writeText('narayansingh28489@gmail.com').then(() => {
+    copyBtn.textContent = 'Copied! ✓';
+    setTimeout(() => { copyBtn.textContent = 'Copy 📋'; }, 2000);
+  });
+});
+
+const contactForm = document.getElementById('contactForm');
+const formSuccess = document.getElementById('formSuccessMsg');
+const submitBtn = document.getElementById('submitContactBtn');
+
+contactForm?.addEventListener('submit', (e) => {
+  e.preventDefault();
+  if (submitBtn) {
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Sending...';
+  }
+  setTimeout(() => {
+    if (submitBtn) {
+      submitBtn.disabled = false;
+      submitBtn.innerHTML = 'Send Inquiry <span>↗</span>';
+    }
+    if (formSuccess) formSuccess.hidden = false;
+    contactForm.reset();
+  }, 600);
+});
