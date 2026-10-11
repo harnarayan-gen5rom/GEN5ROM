@@ -298,7 +298,7 @@ if ('IntersectionObserver' in window && !reducedMotion.matches) {
   const reveals = new IntersectionObserver(entries => entries.forEach(entry => {
     if (entry.isIntersecting) { entry.target.classList.add('revealed'); reveals.unobserve(entry.target); }
   }), { threshold: .08 });
-  document.querySelectorAll('.section-heading, .featured-card, .service-card, .process-grid li, .about-portrait, .about-copy').forEach(element => {
+  document.querySelectorAll('.section-heading, .featured-card, .service-card, .process-grid li, .about-portrait, .about-copy, .comparison-stage, .timeline-card, .skill-card, .metric-item').forEach(element => {
     element.classList.add('reveal'); reveals.observe(element);
   });
 }
@@ -312,7 +312,7 @@ if ('IntersectionObserver' in window) {
       else link.removeAttribute('aria-current');
     });
   }, { rootMargin: '-15% 0px -55% 0px' });
-  document.querySelectorAll('#work, #interactive, #services, #about').forEach(section => navigation.observe(section));
+  document.querySelectorAll('#work, #comparison, #interactive, #experience, #skills, #services, #about').forEach(section => navigation.observe(section));
 }
 document.getElementById('expandScene').addEventListener('click', event => {
   const project = document.querySelector('.spline-project');
@@ -321,6 +321,78 @@ document.getElementById('expandScene').addEventListener('click', event => {
   event.currentTarget.textContent = expanded ? 'Compact viewer ↙' : 'Expand viewer ↗';
   stage.scrollIntoView({ behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth', block: 'start' });
 });
+
+// Before / After Color Grading Comparison Slider
+(function initComparisonSlider() {
+  const container = document.getElementById('comparisonContainer');
+  const beforeLayer = document.getElementById('comparisonBefore');
+  const handle = document.getElementById('comparisonHandle');
+  const presets = document.querySelectorAll('.preset-btn');
+  if (!container || !beforeLayer || !handle) return;
+
+  let isDragging = false;
+
+  function updateSliderPosition(percent) {
+    const clamped = Math.max(0, Math.min(100, percent));
+    beforeLayer.style.clipPath = `inset(0 calc(100% - ${clamped}%) 0 0)`;
+    handle.style.left = `${clamped}%`;
+    handle.setAttribute('aria-valuenow', Math.round(clamped));
+
+    presets.forEach(btn => {
+      const presetVal = parseFloat(btn.dataset.preset);
+      btn.classList.toggle('active', Math.abs(presetVal - clamped) < 8);
+    });
+  }
+
+  function handlePointer(event) {
+    const rect = container.getBoundingClientRect();
+    const clientX = event.clientX !== undefined ? event.clientX : (event.touches && event.touches[0]?.clientX);
+    if (clientX === undefined) return;
+    const x = clientX - rect.left;
+    const percent = (x / rect.width) * 100;
+    updateSliderPosition(percent);
+  }
+
+  function startDrag(event) {
+    isDragging = true;
+    container.classList.add('active');
+    handlePointer(event);
+  }
+
+  function stopDrag() {
+    if (!isDragging) return;
+    isDragging = false;
+    container.classList.remove('active');
+  }
+
+  container.addEventListener('mousedown', startDrag);
+  window.addEventListener('mousemove', e => { if (isDragging) handlePointer(e); });
+  window.addEventListener('mouseup', stopDrag);
+
+  container.addEventListener('touchstart', startDrag, { passive: true });
+  window.addEventListener('touchmove', e => { if (isDragging) handlePointer(e); }, { passive: true });
+  window.addEventListener('touchend', stopDrag);
+
+  presets.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const val = parseFloat(btn.dataset.preset);
+      updateSliderPosition(val);
+    });
+  });
+
+  handle.addEventListener('keydown', e => {
+    const current = parseFloat(handle.getAttribute('aria-valuenow') || '50');
+    if (e.key === 'ArrowLeft') {
+      e.preventDefault();
+      updateSliderPosition(current - 5);
+    } else if (e.key === 'ArrowRight') {
+      e.preventDefault();
+      updateSliderPosition(current + 5);
+    }
+  });
+
+  updateSliderPosition(50);
+})();
 
 // Theme Toggle Functionality
 const sunIconSvg = `<svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>`;
