@@ -506,3 +506,22 @@ btnRobot?.addEventListener('click', () => {
 btnGen5?.addEventListener('click', () => {
   switchScene('https://prod.spline.design/bCzuLFEqzOSbl9ic/scene.splinecode', btnGen5, btnRobot);
 });
+
+// 2-Second Delayed Scroll Indicator Activation
+setTimeout(() => {
+  const scrollIndicator = document.getElementById('heroScrollIndicator');
+  if (scrollIndicator && window.scrollY < 100) {
+    scrollIndicator.classList.add('visible');
+  }
+}, 2000);
+
+window.addEventListener('scroll', () => {
+  const scrollIndicator = document.getElementById('heroScrollIndicator');
+  if (scrollIndicator) {
+    if (window.scrollY > 120) {
+      scrollIndicator.classList.add('hidden-by-scroll');
+    } else {
+      scrollIndicator.classList.remove('hidden-by-scroll');
+    }
+  }
+}, { passive: true });

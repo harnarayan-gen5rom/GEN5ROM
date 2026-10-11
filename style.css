@@ -1248,3 +1248,88 @@ spline-viewer {
 .spline-status {
   display: none !important;
 }
+
+/* ============================================================ */
+/* SUBTLE 2-SECOND DELAYED SCROLL-DOWN INDICATOR ANIMATION      */
+/* ============================================================ */
+.scroll-indicator-delayed .scroll-down-pill {
+  opacity: 0;
+  transform: translateY(12px);
+  transition: opacity 1s cubic-bezier(0.16, 1, 0.3, 1), transform 1s cubic-bezier(0.16, 1, 0.3, 1);
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  text-decoration: none;
+  color: var(--muted);
+  cursor: pointer;
+}
+
+.scroll-indicator-delayed.visible .scroll-down-pill {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.scroll-indicator-delayed.hidden-by-scroll .scroll-down-pill {
+  opacity: 0;
+  transform: translateY(12px);
+  pointer-events: none;
+}
+
+.scroll-down-pill:hover {
+  color: var(--accent);
+}
+
+.scroll-text {
+  font-size: 10px;
+  letter-spacing: 0.22em;
+  font-weight: 600;
+  font-family: monospace;
+}
+
+.scroll-mouse-icon {
+  width: 18px;
+  height: 28px;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  padding-top: 4px;
+  background: rgba(19, 17, 25, 0.6);
+  transition: border-color 0.25s ease;
+}
+
+.scroll-down-pill:hover .scroll-mouse-icon {
+  border-color: var(--accent);
+}
+
+.mouse-wheel {
+  width: 3px;
+  height: 6px;
+  background: var(--accent);
+  border-radius: 2px;
+  animation: mouseWheelBounce 1.6s cubic-bezier(0.65, 0, 0.35, 1) infinite;
+}
+
+@keyframes mouseWheelBounce {
+  0% { transform: translateY(0); opacity: 1; }
+  50% { transform: translateY(8px); opacity: 0.25; }
+  100% { transform: translateY(0); opacity: 1; }
+}
+
+.scroll-arrow {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  display: grid;
+  place-items: center;
+  font-size: 12px;
+  color: var(--accent);
+  transition: transform 0.25s ease, border-color 0.25s ease;
+}
+
+.scroll-down-pill:hover .scroll-arrow {
+  border-color: var(--accent);
+  transform: translateY(2px);
+}
