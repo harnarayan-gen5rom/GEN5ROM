@@ -142,7 +142,7 @@ function applySceneQuality() {
   const badgeText = document.getElementById('splineDeviceText');
   if (badgeText) {
     const devName = isMobile ? 'PHONE (MOBILE)' : isTablet ? 'TAB (TABLET)' : 'WEB (DESKTOP)';
-    badgeText.textContent = ;
+    badgeText.textContent = devName + " · " + targetDpr.toFixed(1) + "x RETINA CRISP";
   }
 
   runtime.requestRender?.();
@@ -482,7 +482,7 @@ window.addEventListener('scroll', () => {
   if (!progressBar) return;
   const total = document.documentElement.scrollHeight - window.innerHeight;
   if (total > 0) {
-    progressBar.style.width = ;
+    progressBar.style.width = ((window.scrollY / total) * 100) + "%";
   }
 }, { passive: true });
 
