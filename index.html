@@ -24,7 +24,7 @@
   })();
  </script>
  <link rel="icon" type="image/webp" href="assets/harnarayan-profile.webp" />
- <link rel="stylesheet" href="style.css?v=20261011_04" />
+ <link rel="stylesheet" href="style.css?v=20261011_05" />
  <script type="module" src="https://unpkg.com/@splinetool/viewer@1.9.75/build/spline-viewer.js"></script>
 </head>
 <body>
@@ -243,39 +243,78 @@
  </section>
  <section class="comparison container section" id="comparison">
   <header class="section-heading">
-   <div><p class="eyebrow">POST-PRODUCTION CRAFT</p><h2>Grade &amp; <span>Motion.</span></h2></div>
-   <p>Raw S-Log capture meets deliberate color science.<br />Drag the split handle to inspect the grade.</p>
+    <div><p class="eyebrow">POST-PRODUCTION CRAFT · COLOR SCIENCE</p><h2>Raw S-Log vs. <span>4K Master Grade.</span></h2></div>
+    <p>Watch the animated color wipe from flat camera log to cinematic film grade, or drag the interactive slider.</p>
   </header>
-  <div class="comparison-stage" id="comparisonStage" aria-label="Interactive color grading comparison">
-   <div class="comparison-container" id="comparisonContainer">
-    <div class="comparison-layer comparison-after">
-     <img src="assets/Banner.webp" alt="Final Color Graded and Mastered Footage" loading="lazy" />
-     <span class="comparison-badge badge-after">Final Grade · 4K Master</span>
-    </div>
-    <div class="comparison-layer comparison-before" id="comparisonBefore">
-     <img src="assets/Banner.webp" alt="Raw Flat S-Log Profile" class="raw-grade" loading="lazy" />
-     <span class="comparison-badge badge-before">Raw S-Log · Flat Capture</span>
-    </div>
-    <div class="comparison-handle" id="comparisonHandle" role="slider" aria-label="Comparison slider" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100" tabindex="0">
-     <div class="handle-line"></div>
-     <div class="handle-button">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="handle-icon"><path d="m9 18-6-6 6-6"/><path d="m15 6 6 6-6 6"/></svg>
-     </div>
-    </div>
-   </div>
-   <div class="comparison-toolbar">
-    <div class="comparison-caption">
-     <span class="live-dot"></span>
-     <span>Live Split View · Drag cursor or swipe across frame</span>
-    </div>
-    <div class="comparison-presets" role="group" aria-label="Comparison view presets">
-     <button type="button" class="preset-btn" data-preset="10">Raw Only</button>
-     <button type="button" class="preset-btn active" data-preset="50">Split (50%)</button>
-     <button type="button" class="preset-btn" data-preset="90">Grade Only</button>
-    </div>
-   </div>
+
+  <!-- Color View Mode Switcher -->
+  <div class="color-mode-tabs" role="tablist">
+    <button type="button" class="color-tab-btn active" id="tabColorVideo" role="tab" aria-selected="true">
+      <span>🎬 Watch Video Wipe Animation</span>
+    </button>
+    <button type="button" class="color-tab-btn" id="tabColorSlider" role="tab" aria-selected="false">
+      <span>↔ Interactive Manual Slider</span>
+    </button>
   </div>
- </section>
+
+  <!-- Mode 1: Video Wipe Animation Showcase (PsYl-PKBSjw) -->
+  <div class="color-video-card" id="colorVideoView">
+    <div class="color-video-grid">
+      <div class="color-video-media">
+        <div class="color-video-wrapper">
+          <iframe
+            src="https://www.youtube-nocookie.com/embed/PsYl-PKBSjw?autoplay=1&mute=0&loop=1&playlist=PsYl-PKBSjw&controls=1&playsinline=1"
+            title="Before &amp; After Color Grade Wipe Animation"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowfullscreen>
+          </iframe>
+          <span class="color-live-badge">LIVE ANIMATION · WIPE FX</span>
+        </div>
+      </div>
+      <div class="color-video-copy">
+        <span class="eyebrow">DAVINCI RESOLVE COLOR SCIENCE</span>
+        <h3>From Flat Log Footage to Rich Cinematic Atmosphere.</h3>
+        <p>In this editorial sequence, flat uncolored camera capture transforms via a precise vertical split wipe into deep rich forest greens, organic skin tones, and controlled dynamic range.</p>
+        <div class="color-tech-badges">
+          <div class="tech-badge"><span>COLOR WORKSPACE</span><strong>DaVinci Wide Gamut</strong></div>
+          <div class="tech-badge"><span>SKIN SCIENCE</span><strong>Organic Melanin Curve</strong></div>
+          <div class="tech-badge"><span>FINISHING</span><strong>Film Emulation Print</strong></div>
+        </div>
+        <div class="color-video-actions">
+          <a href="https://youtube.com/shorts/PsYl-PKBSjw?feature=share" target="_blank" rel="noopener noreferrer" class="btn btn-primary">Watch Full Quality on YouTube <span>↗</span></a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Mode 2: Interactive Slider (Hidden by default) -->
+  <div class="comparison-stage" id="comparisonSliderView" style="display: none;" aria-label="Interactive color grading comparison">
+    <div class="comparison-container" id="comparisonContainer">
+      <div class="comparison-layer comparison-after">
+        <img src="assets/Banner.webp" alt="Final Color Graded and Mastered Footage" loading="lazy" />
+        <span class="comparison-badge badge-after">Final Grade · 4K Master</span>
+      </div>
+      <div class="comparison-layer comparison-before" id="comparisonBefore">
+        <img src="assets/Banner.webp" alt="Raw Flat S-Log Profile" class="raw-grade" loading="lazy" />
+        <span class="comparison-badge badge-before">Raw S-Log · Flat Capture</span>
+      </div>
+      <div class="comparison-handle" id="comparisonHandle" role="slider" aria-label="Comparison slider" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100" tabindex="0">
+        <div class="handle-line"></div>
+        <div class="handle-button">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="handle-icon"><path d="m9 18-6-6 6-6"/><path d="m15 6 6 6-6 6"/></svg>
+        </div>
+      </div>
+    </div>
+    <div class="comparison-controls">
+      <span class="comparison-instruction">Drag slider or choose a preset:</span>
+      <div class="comparison-presets">
+        <button type="button" class="preset-btn" data-preset="10">Raw Only</button>
+        <button type="button" class="preset-btn active" data-preset="50">Split (50%)</button>
+        <button type="button" class="preset-btn" data-preset="90">Grade Only</button>
+      </div>
+    </div>
+  </div>
+</section>
  <section class="interactive container section" id="interactive">
   <header class="section-heading"><div><p class="eyebrow">A DIFFERENT DIMENSION</p><h2>Interactive <span>3D.</span></h2></div><p>Beyond the timeline.<br />A design you can explore for yourself.</p></header>
   <article class="spline-project"><div class="scene-toolbar"><span>PLAYGROUND / 01</span><div class="scene-switcher-group" role="tablist"><button type="button" class="scene-switch-btn active" id="btnRobotScene" data-url="https://prod.spline.design/NCQe8dUMReBbPYxM/scene.splinecode">🤖 Cyber Robot</button><button type="button" class="scene-switch-btn" id="btnGen5Scene" data-url="https://prod.spline.design/bCzuLFEqzOSbl9ic/scene.splinecode">🔮 GEN5ROM Core</button></div><div class="spline-device-badge" id="splineDeviceBadge"><span class="live-dot"></span> <span id="splineDeviceText">ORIGINAL RETINA · AUTO FIT</span></div><button type="button" id="resetScene" class="btn btn-outline" style="padding: 6px 12px; font-size: 11px;">Reset ↺</button><button type="button" id="toggleScene" class="scene-toggle" aria-pressed="false">Pause</button></div><div class="spline-stage" id="splineStage"><spline-viewer id="splineViewer" url="https://prod.spline.design/NCQe8dUMReBbPYxM/scene.splinecode" loading-anim-type="none" events-target="global" aria-label="Harnarayan's interactive 3D Spline project"></spline-viewer><div class="stage-label"><span class="live-dot"></span> LIVE 3D EXPERIENCE</div><div class="spline-status" id="splineStatus" role="status"><span>Loading when the playground comes into view…</span><button type="button" class="btn btn-outline" id="reloadScene" hidden>Reload scene</button></div></div><div class="spline-details"><div><p class="eyebrow">SPLINE · INTERACTIVE DESIGN</p><h3>Meet GEN5-BOT · AI 3D Companion.</h3><p>Move your mouse or drag to interact. The 3D robot actively tracks your cursor in real-time with responsive head and eye gestures.</p><div class="project-tags"><span>3D design</span><span>Real-time interaction</span><span>Spline</span></div></div><button class="btn btn-outline" id="expandScene" type="button" aria-expanded="false">Expand viewer ↗</button></div></article>
@@ -507,5 +546,5 @@
 <footer class="footer container"><span>© 2026 Harnarayan</span><span>Motion · Video · Design · Interactive 3D</span><a href="#home">Back to top ↑</a></footer>
 <div class="video-modal modal" id="videoModal" role="dialog" aria-modal="true" aria-labelledby="videoTitle" hidden><div class="modal-content"><div class="modal-bar"><h2 id="videoTitle">Video project</h2><button class="close" type="button" aria-label="Close video">×</button></div><iframe id="videoFrame" title="Portfolio video player" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe></div></div>
 <div class="image-modal modal" id="imageModal" role="dialog" aria-modal="true" aria-labelledby="imageCaption" hidden><div class="image-modal-content"><div class="modal-bar"><h2 id="imageCaption">Artwork</h2><button class="close-image" type="button" aria-label="Close image">×</button></div><img id="modalImage" alt="" /></div></div>
-<script src="script.js?v=20261011_04" defer></script>
+<script src="script.js?v=20261011_05" defer></script>
 </body></html>

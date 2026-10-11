@@ -554,3 +554,23 @@ contactForm?.addEventListener('submit', (e) => {
     contactForm.reset();
   }, 600);
 });
+
+// Color Grading View Switcher (Video Wipe vs Slider)
+const tabColorVideo = document.getElementById('tabColorVideo');
+const tabColorSlider = document.getElementById('tabColorSlider');
+const colorVideoView = document.getElementById('colorVideoView');
+const comparisonSliderView = document.getElementById('comparisonSliderView');
+
+tabColorVideo?.addEventListener('click', () => {
+  tabColorVideo.classList.add('active');
+  tabColorSlider?.classList.remove('active');
+  if (colorVideoView) colorVideoView.style.display = 'block';
+  if (comparisonSliderView) comparisonSliderView.style.display = 'none';
+});
+
+tabColorSlider?.addEventListener('click', () => {
+  tabColorSlider.classList.add('active');
+  tabColorVideo?.classList.remove('active');
+  if (colorVideoView) colorVideoView.style.display = 'none';
+  if (comparisonSliderView) comparisonSliderView.style.display = 'block';
+});
