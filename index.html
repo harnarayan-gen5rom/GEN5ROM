@@ -4,18 +4,68 @@
  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
  <title>Harnarayan — Motion, Video &amp; Interactive 3D</title>
  <meta name="description" content="Harnarayan's creative portfolio: motion graphics, video editing, graphic design, and interactive 3D experiences. Based in New Delhi, India." />
+ <meta property="og:title" content="Harnarayan — Motion, Video &amp; Interactive 3D" />
+ <meta property="og:description" content="Harnarayan's creative portfolio: motion graphics, video editing, graphic design, and interactive 3D experiences. Based in New Delhi, India." />
+ <meta property="og:type" content="website" />
+ <meta name="twitter:card" content="summary_large_image" />
  <meta name="theme-color" content="#0b0b10" />
- <link rel="icon" type="image/webp" href="assets/harnarayan-profile.webp" />
- <link rel="stylesheet" href="style.css?v=20261011g" />
+ <script>
+  (function() {
+    const saved = localStorage.getItem('theme');
+    const prefersLight = window.matchMedia('(prefers-color-scheme: light)').matches;
+    const theme = saved || (prefersLight ? 'light' : 'dark');
+    if (theme === 'light') {
+      document.documentElement.classList.add('light');
+      document.documentElement.setAttribute('data-theme', 'light');
+    } else {
+      document.documentElement.classList.add('dark');
+      document.documentElement.setAttribute('data-theme', 'dark');
+    }
+  })();
+ </script>
+ <link rel="icon" type="image/webp" href="/assets/harnarayan-profile.webp" />
+ <link rel="stylesheet" href="/src/index.css" />
+ <link rel="stylesheet" href="/style.css" />
 </head>
 <body>
 <a class="skip-link" href="#work">Skip to projects</a>
 <header class="navbar">
  <a class="brand" href="#home"><img src="assets/harnarayan-profile.webp" width="44" height="44" alt="" /><span><strong>Harnarayan</strong><small>Motion &amp; visual design</small></span></a>
  <nav class="desktop-nav" aria-label="Main navigation"><a href="#work">Work</a><a href="#interactive">Interactive 3D</a><a href="#services">Services</a><a href="#about">About</a></nav>
- <div class="nav-actions"><a class="btn btn-outline resume-link" href="assets/harnarayan-resume.pdf?v=20261011e" target="_blank" rel="noopener noreferrer">Resume ↗</a><a class="btn btn-primary" href="#contact">Let's talk ↗</a></div>
+ <div class="nav-actions">
+  <button
+    type="button"
+    id="themeToggle"
+    class="inline-flex items-center justify-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-full border border-[var(--border)] bg-[var(--surface)] text-[var(--text)] hover:border-[var(--accent)] hover:text-[var(--accent)] transition-all cursor-pointer shadow-xs focus-visible:outline-2 focus-visible:outline-[var(--accent)] select-none"
+    aria-label="Toggle between dark and light mode"
+    aria-pressed="false"
+    title="Switch theme"
+  >
+    <span id="themeToggleIcon" class="w-3.5 h-3.5 flex items-center justify-center shrink-0" aria-hidden="true"></span>
+    <span id="themeToggleText" class="text-[11px] font-semibold tracking-wider uppercase">Light</span>
+  </button>
+  <a class="btn btn-outline resume-link" href="assets/harnarayan-resume.pdf?v=20261011e" target="_blank" rel="noopener noreferrer">Resume ↗</a>
+  <a class="btn btn-primary" href="#contact">Let's talk ↗</a>
+ </div>
  <button class="hamburger" id="hamburger" aria-label="Toggle navigation" aria-expanded="false" aria-controls="mobileMenu"><span></span><span></span><span></span></button>
- <nav class="mobile-menu" id="mobileMenu" aria-label="Mobile navigation" hidden><a href="#work">Work</a><a href="#interactive">Interactive 3D</a><a href="#services">Services</a><a href="#about">About</a><a href="#contact">Contact</a><a href="assets/harnarayan-resume.pdf?v=20261011e" target="_blank" rel="noopener noreferrer">Resume ↗</a></nav>
+ <nav class="mobile-menu" id="mobileMenu" aria-label="Mobile navigation" hidden>
+  <a href="#work">Work</a><a href="#interactive">Interactive 3D</a><a href="#services">Services</a><a href="#about">About</a><a href="#contact">Contact</a>
+  <a href="assets/harnarayan-resume.pdf?v=20261011e" target="_blank" rel="noopener noreferrer">Resume ↗</a>
+  <div class="pt-3 mt-2 border-t border-[var(--border)]">
+   <button
+     type="button"
+     id="mobileThemeToggle"
+     class="w-full flex items-center justify-between px-3.5 py-2.5 text-xs font-medium rounded-lg border border-[var(--border)] bg-[var(--surface)] text-[var(--text)] hover:border-[var(--accent)] transition-colors cursor-pointer"
+     aria-label="Toggle between dark and light mode"
+   >
+     <span class="flex items-center gap-2">
+       <span id="mobileThemeToggleIcon" class="w-3.5 h-3.5 flex items-center justify-center" aria-hidden="true"></span>
+       <span>Theme</span>
+     </span>
+     <span id="mobileThemeToggleStatus" class="text-[10px] font-semibold tracking-wider uppercase px-2 py-0.5 rounded bg-[var(--border)] text-[var(--accent)]">Dark</span>
+   </button>
+  </div>
+ </nav>
 </header>
 <main id="home">
  <section class="hero container">
@@ -172,5 +222,5 @@
 <footer class="footer container"><span>© 2026 Harnarayan</span><span>Motion · Video · Design · Interactive 3D</span><a href="#home">Back to top ↑</a></footer>
 <div class="video-modal modal" id="videoModal" role="dialog" aria-modal="true" aria-labelledby="videoTitle" hidden><div class="modal-content"><div class="modal-bar"><h2 id="videoTitle">Video project</h2><button class="close" type="button" aria-label="Close video">×</button></div><iframe id="videoFrame" title="Portfolio video player" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe></div></div>
 <div class="image-modal modal" id="imageModal" role="dialog" aria-modal="true" aria-labelledby="imageCaption" hidden><div class="image-modal-content"><div class="modal-bar"><h2 id="imageCaption">Artwork</h2><button class="close-image" type="button" aria-label="Close image">×</button></div><img id="modalImage" alt="" /></div></div>
-<script src="script.js?v=20261011g" defer></script>
+<script type="module" src="/script.js"></script>
 </body></html>
