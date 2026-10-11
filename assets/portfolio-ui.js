@@ -83,3 +83,20 @@ export function useSplinePlayback(React, stage, runtime, loading, paused) {
     };
   }, [loading, paused, stage, runtime]);
 }
+
+export function createClickVideo(React) {
+  return function ClickVideo({ videoId, title }) {
+    const [playing, setPlaying] = React.useState(false);
+    if (playing) return React.createElement('iframe', {
+      src: `https://www.youtube-nocookie.com/embed/${videoId}?autoplay=1&playsinline=1&rel=0`,
+      title, className: 'w-full h-full border-0', allowFullScreen: true,
+      allow: 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture'
+    });
+    return React.createElement('button', {
+      type: 'button', className: 'video-load-poster', onClick: () => setPlaying(true),
+      'aria-label': `Play ${title}`
+    }, React.createElement('img', {
+      src: `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`, alt: '', loading: 'lazy', decoding: 'async'
+    }), React.createElement('span', null, '▶ Play color grading comparison'));
+  };
+}

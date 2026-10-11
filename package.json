@@ -1,0 +1,15 @@
+{
+  "name": "gen5rom-portfolio",
+  "private": true,
+  "scripts": {
+    "build": "node scripts/build-portfolio.cjs",
+    "check": "node scripts/check-portfolio.cjs"
+  },
+  "dependencies": {
+    "react": "19.3.0",
+    "react-dom": "19.3.0"
+  },
+  "devDependencies": {
+    "esbuild": "0.28.2"
+  }
+}
