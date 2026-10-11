@@ -1136,3 +1136,72 @@ html.light .skill-chips span {
     font-size: 32px;
   }
 }
+
+/* ============================================================ */
+/* SMOOTH MOTION, SCROLL PROGRESS & CRISP SPLINE ENHANCEMENTS  */
+/* ============================================================ */
+
+/* Top Scroll Progress Indicator */
+.scroll-progress-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 3px;
+  background: linear-gradient(90deg, #6366f1, #a855f7, #ec4899);
+  z-index: 99999;
+  width: 0%;
+  pointer-events: none;
+  box-shadow: 0 0 10px rgba(168, 85, 247, 0.6);
+  transition: width 0.08s linear;
+}
+
+/* Enhanced Buttery Smooth Scroll Reveal */
+.reveal {
+  opacity: 0;
+  transform: translateY(28px) scale(0.985);
+  transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: opacity, transform;
+}
+
+.reveal.revealed {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+
+/* Staggered card entrance delays */
+.featured-work .featured-card:nth-child(1) { transition-delay: 0.06s; }
+.featured-work .featured-card:nth-child(2) { transition-delay: 0.16s; }
+.featured-work .featured-card:nth-child(3) { transition-delay: 0.26s; }
+.process-grid li:nth-child(1) { transition-delay: 0.05s; }
+.process-grid li:nth-child(2) { transition-delay: 0.12s; }
+.process-grid li:nth-child(3) { transition-delay: 0.19s; }
+.process-grid li:nth-child(4) { transition-delay: 0.26s; }
+
+/* Spline Viewer Hardware Edge Sharpness */
+spline-viewer {
+  image-rendering: -webkit-optimize-contrast;
+  image-rendering: crisp-edges;
+}
+
+/* Spline Automatic Device Badge */
+.spline-device-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 14px;
+  background: #100d15;
+  border: 1px solid #3c3048;
+  border-radius: 30px;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  color: #c4a2ff;
+  text-transform: uppercase;
+}
+
+/* Mobile smooth touch handling (prevents touch trapping while scrolling) */
+@media (max-width: 760px) {
+  .spline-stage {
+    touch-action: pan-y;
+  }
+}

@@ -108,21 +108,43 @@ let sceneInView = false;
 let manuallyPaused = false;
 let qualityMode = 'auto';
 const sceneToggle = document.getElementById('toggleScene');
-const qualityButtons = [...document.querySelectorAll('[data-quality]')];
-function scenePixelRatio(mode, width, height, dpr, compact) {
-  // Cap actual drawing pixels, especially on 3x mobile screens and expanded views.
-  const cap = mode === 'smooth' ? 1 : mode === 'crisp' ? 2 : compact ? 1.25 : 1.5;
-  const budget = mode === 'crisp' ? 3200000 : mode === 'smooth' ? 900000 : 1800000;
-  const density = mode === 'crisp' ? 2 : dpr || 1;
-  return Math.max(.75, Math.min(density, cap, Math.sqrt(budget / Math.max(1, width * height))));
-}
 function applySceneQuality() {
-  const runtime = document.getElementById('splineViewer')?._spline;
+  const viewer = document.getElementById('splineViewer');
+  const runtime = viewer?._spline;
   const renderer = runtime?._renderer;
-  if (!sceneLoaded || typeof renderer?.setPixelRatio !== 'function') return;
-  const ratio = scenePixelRatio(qualityMode, stage.clientWidth, stage.clientHeight,
-    window.devicePixelRatio, window.matchMedia('(max-width: 760px)').matches);
-  renderer.setPixelRatio(ratio);
+  if (!sceneLoaded || !renderer || typeof renderer.setPixelRatio !== 'function') return;
+
+  const isMobile = window.matchMedia('(max-width: 640px)').matches;
+  const isTablet = window.matchMedia('(min-width: 641px) and (max-width: 1024px)').matches;
+  const rawDpr = window.devicePixelRatio || 1;
+
+  // 1. ORIGINAL QUALITY: True native Retina resolution without downsampling or budget capping!
+  const targetDpr = Math.min(rawDpr, 3);
+  renderer.setPixelRatio(targetDpr);
+
+  // 2. Hardware edge contrast & antialiasing
+  const canvas = viewer.shadowRoot ? viewer.shadowRoot.querySelector('canvas') : viewer.querySelector('canvas');
+  if (canvas) {
+    canvas.style.imageRendering = '-webkit-optimize-contrast';
+  }
+
+  // 3. Dynamic Camera & Zoom Fit for Phone vs Tablet vs Web
+  const camera = runtime?.camera || runtime?._camera;
+  if (camera) {
+    if (isMobile) {
+      if (camera.zoom && camera.zoom > 0.8) camera.zoom = 0.75;
+    } else if (isTablet) {
+      if (camera.zoom && camera.zoom > 0.9) camera.zoom = 0.88;
+    }
+  }
+
+  // Update live badge text
+  const badgeText = document.getElementById('splineDeviceText');
+  if (badgeText) {
+    const devName = isMobile ? 'PHONE (MOBILE)' : isTablet ? 'TAB (TABLET)' : 'WEB (DESKTOP)';
+    badgeText.textContent = ;
+  }
+
   runtime.requestRender?.();
 }
 function syncScenePlayback() {
@@ -134,11 +156,7 @@ function syncScenePlayback() {
   sceneToggle.setAttribute('aria-pressed', String(manuallyPaused));
   sceneToggle.textContent = manuallyPaused ? 'Resume' : 'Pause';
 }
-qualityButtons.forEach(button => button.addEventListener('click', () => {
-  qualityMode = button.dataset.quality;
-  qualityButtons.forEach(item => item.setAttribute('aria-pressed', String(item === button)));
-  applySceneQuality();
-}));
+// Quality buttons removed in favor of automatic native Retina resolution
 sceneToggle.addEventListener('click', () => { manuallyPaused = !manuallyPaused; syncScenePlayback(); });
 document.addEventListener('visibilitychange', syncScenePlayback);
 if ('ResizeObserver' in window) new ResizeObserver(applySceneQuality).observe(stage);
@@ -153,8 +171,8 @@ function disableSceneRotation(data) {
   if (!scene) return;
   // Start at 1x to avoid a large GPU allocation before the capped mode is applied.
   if (scene.publish?.settings?.web) {
-    scene.publish.settings.web.pixelRatioMobile = 1;
-    scene.publish.settings.web.pixelRatioDesktop = 1;
+    delete scene.publish.settings.web.pixelRatioMobile;
+    delete scene.publish.settings.web.pixelRatioDesktop;
   }
   if (scene.publish?.orbitControls) {
     scene.publish.orbitControls.autoRotate = false;
@@ -450,3 +468,24 @@ function initTheme() {
 
 initTheme();
 
+
+// Reset Scene Camera
+document.getElementById('resetScene')?.addEventListener('click', () => {
+  const viewer = document.getElementById('splineViewer');
+  const runtime = viewer?._spline;
+  if (runtime?.resetCamera) {
+    runtime.resetCamera();
+  } else {
+    document.getElementById('reloadScene')?.click();
+  }
+});
+
+// Scroll Progress Bar
+const progressBar = document.getElementById('scrollProgressBar');
+window.addEventListener('scroll', () => {
+  if (!progressBar) return;
+  const total = document.documentElement.scrollHeight - window.innerHeight;
+  if (total > 0) {
+    progressBar.style.width = ;
+  }
+}, { passive: true });
