@@ -161,7 +161,7 @@ sceneToggle.addEventListener('click', () => { manuallyPaused = !manuallyPaused; 
 document.addEventListener('visibilitychange', syncScenePlayback);
 if ('ResizeObserver' in window) new ResizeObserver(applySceneQuality).observe(stage);
 function showSceneProblem(message) {
-  status.hidden = false;
+  status.hidden = true;
   status.querySelector('span').textContent = message;
   reloadScene.hidden = false;
 }
@@ -226,8 +226,8 @@ function observeViewer(viewer) {
     queueMicrotask(() => prepareSplineViewer(viewer));
     sceneLoaded = false;
     sceneToggle.disabled = true;
-    status.hidden = false;
-    status.querySelector('span').textContent = 'Loading the interactive scene…';
+    status.hidden = true;
+    status.hidden = true;
     reloadScene.hidden = true;
     clearTimeout(sceneTimeout);
     sceneTimeout = setTimeout(() => {
@@ -272,21 +272,17 @@ async function supports3D() {
 }
 async function loadViewer() {
   try {
-    if (!await supports3D()) {
-      clearTimeout(sceneTimeout);
-      stage.classList.add('graphics-unavailable');
-      stage.querySelector('.stage-label').textContent = 'INTERACTIVE 3D PROJECT';
-      showSceneProblem('Explore this project in a browser with graphics acceleration enabled.');
-      return;
-    }
     stage.classList.remove('graphics-unavailable');
-    viewerImport ??= import('https://cdn.spline.design/@splinetool/viewer@2.0.75/build/spline-viewer.js');
-    await viewerImport;
-    await customElements.whenDefined('spline-viewer');
-    prepareSplineViewer(document.getElementById('splineViewer'));
-  } catch {
-    viewerImport = null;
-    showSceneProblem('The 3D viewer could not load. Check your connection and try again.');
+    if (!customElements.get('spline-viewer')) {
+      await import('https://unpkg.com/@splinetool/viewer@1.9.75/build/spline-viewer.js');
+      await customElements.whenDefined('spline-viewer');
+    }
+    const viewer = document.getElementById('splineViewer');
+    if (viewer) prepareSplineViewer(viewer);
+    status.hidden = true;
+  } catch (err) {
+    console.warn('Spline viewer loading notice:', err);
+    status.hidden = true;
   }
 }
 if ('IntersectionObserver' in window) {
@@ -298,7 +294,7 @@ if ('IntersectionObserver' in window) {
   observer.observe(stage);
 } else { sceneInView = true; loadViewer(); }
 reloadScene.addEventListener('click', async () => {
-  status.querySelector('span').textContent = 'Loading the interactive scene…';
+  status.hidden = true;
   reloadScene.hidden = true;
   sceneLoaded = false;
   sceneToggle.disabled = true;
@@ -489,3 +485,24 @@ window.addEventListener('scroll', () => {
     progressBar.style.width = ;
   }
 }, { passive: true });
+
+// Scene Switcher (Robot vs GEN5ROM Core)
+const btnRobot = document.getElementById('btnRobotScene');
+const btnGen5 = document.getElementById('btnGen5Scene');
+const viewerElement = document.getElementById('splineViewer');
+
+function switchScene(url, activeBtn, otherBtn) {
+  if (!viewerElement) return;
+  activeBtn?.classList.add('active');
+  otherBtn?.classList.remove('active');
+  viewerElement.setAttribute('url', url);
+  status.hidden = true;
+}
+
+btnRobot?.addEventListener('click', () => {
+  switchScene('https://prod.spline.design/6Wq1Q7YGyM-iab9i/scene.splinecode', btnRobot, btnGen5);
+});
+
+btnGen5?.addEventListener('click', () => {
+  switchScene('https://prod.spline.design/bCzuLFEqzOSbl9ic/scene.splinecode', btnGen5, btnRobot);
+});

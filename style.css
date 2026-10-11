@@ -1205,3 +1205,46 @@ spline-viewer {
     touch-action: pan-y;
   }
 }
+
+/* 3D Scene Switcher (Robot Sentinel & GEN5ROM Core) */
+.scene-switcher-group {
+  display: inline-flex;
+  background: #100d15;
+  border: 1px solid #3c3048;
+  border-radius: 30px;
+  padding: 3px;
+  gap: 3px;
+}
+
+.scene-switch-btn {
+  background: transparent;
+  border: 0;
+  border-radius: 30px;
+  padding: 6px 14px;
+  color: #b7a7c5;
+  font-size: 11px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.scene-switch-btn:hover {
+  color: #fff;
+}
+
+.scene-switch-btn.active {
+  background: #c4a2ff;
+  color: #1e102c;
+  font-weight: 600;
+  box-shadow: 0 0 12px rgba(196, 162, 255, 0.45);
+}
+
+/* Ensure spline-viewer is never hidden */
+.spline-stage spline-viewer {
+  display: block !important;
+  width: 100% !important;
+  height: 100% !important;
+}
+.spline-status {
+  display: none !important;
+}
