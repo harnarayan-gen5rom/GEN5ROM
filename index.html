@@ -15,8 +15,18 @@
     <script type="module" crossorigin src="./assets/portfolio-app.js?v=20261012-readability"></script>
     <link rel="stylesheet" crossorigin href="./assets/index-BDsRFLRK.css">
     <link rel="stylesheet" href="./assets/portfolio-theme.css?v=20261012-readability">
+
+    <style>
+      .kids-videos-quicklink{position:fixed;right:22px;bottom:22px;z-index:9999;display:inline-flex;align-items:center;gap:9px;padding:12px 17px;border:1px solid rgba(255,255,255,.18);border-radius:999px;background:linear-gradient(110deg,#b3a0ff,#80e8e2);color:#0b0c16;font:700 12px/1.2 'Plus Jakarta Sans',sans-serif;text-decoration:none;box-shadow:0 10px 34px rgba(113,95,212,.30);transition:transform .2s ease,box-shadow .2s ease}
+      .kids-videos-quicklink:hover{transform:translateY(-3px);box-shadow:0 14px 38px rgba(113,95,212,.4)}
+      .kids-videos-quicklink .kids-mark{font-size:15px}
+      @media(max-width:560px){.kids-videos-quicklink{right:12px;bottom:12px;padding:11px 14px;font-size:11px}}
+      @media(prefers-reduced-motion:reduce){.kids-videos-quicklink{transition:none}.kids-videos-quicklink:hover{transform:none}}
+    </style>
+
   </head>
   <body class="bg-[#090a0f] text-slate-100 antialiased selection:bg-indigo-500/30 selection:text-indigo-200 overflow-x-hidden">
+    <a class="kids-videos-quicklink" href="./kids-videos.html" aria-label="Open AI Kids Videos page"><span class="kids-mark" aria-hidden="true">✦</span> AI Kids Videos <span aria-hidden="true">↗</span></a>
     <div id="root"></div>
   </body>
 </html>
