@@ -339,7 +339,7 @@ var R = `/app/applet/src/components/ContactSection.tsx`, Ul = () => {
   }) }, void 0), (0, D.jsx)(`div`, { className: `w-[1px] h-8 bg-gradient-to-t from-transparent to-[var(--border)] opacity-60` }, void 0)] }, void 0);
 }, Jl = `/app/applet/src/components/SectionDivider.tsx`, Yl = ({ className: e2 = `` }) => (0, D.jsx)(`div`, { "aria-hidden": `true`, className: `relative w-full max-w-7xl mx-auto px-6 py-4 overflow-hidden flex items-center justify-center select-none ${e2}`, children: [(0, D.jsx)(`div`, { className: `absolute inset-x-8 sm:inset-x-16 h-8 section-divider-glow pointer-events-none -z-10 blur-xl opacity-60` }, void 0), (0, D.jsx)(`div`, { className: `relative w-full h-[1px] section-divider-line rounded-full opacity-80`, children: (0, D.jsx)(`div`, { className: `absolute top-1/2 -translate-y-1/2 w-10 sm:w-16 h-[2px] section-divider-sparkle blur-[1px] rounded-full` }, void 0) }, void 0)] }, void 0), z = `/app/applet/src/App.tsx`;
 function Xl() {
-  let [e2, t] = (0, E.useState)(`dark`), [n, r] = (0, E.useState)(0), [i, a] = (0, E.useState)(false), [o, s] = (0, E.useState)(false), [c, l] = (0, E.useState)(false), [u, d] = (0, E.useState)(0);
+  let [e2, t] = (0, E.useState)(`light`), [n, r] = (0, E.useState)(0), [i, a] = (0, E.useState)(false), [o, s] = (0, E.useState)(false), [c, l] = (0, E.useState)(false), [u, d] = (0, E.useState)(0);
   return (0, E.useEffect)(() => {
     let e3 = setTimeout(() => {
       l(true);
