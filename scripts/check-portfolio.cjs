@@ -25,6 +25,10 @@ for (const text of ['MwyLKuCi6Qc', 'Load interactive 3D', 'id="interactive"', 'i
 assert(!html.includes('<canvas'), '3D must wait for a deliberate tap');
 assert(!html.includes('<iframe'), 'Video players must wait for a deliberate tap');
 assert(!fs.readFileSync('index.html', 'utf8').includes('modulepreload'), 'No eager Spline downloads');
+assert.equal((html.match(/class="creative-toolkit-chip"/g) || []).length, 7, 'All seven tools must have separate wrapping items');
+assert(html.includes('class="creative-toolkit-list" role="list"'), 'Toolkit must keep its dedicated layout');
+assert(!html.includes('&amp;amp;'), 'Project labels must not display HTML entities');
+esbuild.transformSync(fs.readFileSync('assets/portfolio-theme.css', 'utf8'), { loader: 'css', minify: true });
 
 // Validate every retained runtime import/export, including its dynamic chunks.
 esbuild.buildSync({
