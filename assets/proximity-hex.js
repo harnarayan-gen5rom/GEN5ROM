@@ -43,7 +43,7 @@ function setup(){
   dims();
   fallback.style.setProperty("--hex-cols",columns);
   fallback.style.setProperty("--hex-rows",rows);
-  const tilesFallbackCount=coarse?Math.min(count,235):Math.min(count,420);
+  const tilesFallbackCount=count;
   for(let i=0;i<tilesFallbackCount;i++){
     const el=document.createElement("i");
     el.style.setProperty("--tile-opacity",(.38+((i*29%19)/19)*.44).toFixed(2));
@@ -204,6 +204,7 @@ function setup(){
     const viewHeight=(rows-.3)*dy;
     const viewWidth=viewHeight*w/h;
     renderer.setSize(w,h,false);
+    camera.aspect=w/h;
     camera.left=-viewWidth/2;camera.right=viewWidth/2;
     camera.top=viewHeight/2;camera.bottom=-viewHeight/2;
     camera.updateProjectionMatrix();
